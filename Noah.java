@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 public class Noah {
-
 	static int totalCols;
 	static int totalRows;
 	static boolean[][] visited;
