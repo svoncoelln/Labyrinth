@@ -2,62 +2,89 @@ import java.util.ArrayList;
 
 public class Noah {
 
-	static boolean[][] visited = new boolean[3][3];
-	int count;
 	static int totalCols;
 	static int totalRows;
-	static ArrayList<Integer> directions;
-	static int [][] solution;
+	static boolean[][] visited;
+	static ArrayList<Integer> directions = new ArrayList<>();
+	static int[] moves;
 
-	public Noah() {
-
-	}
-
-	public void ariadnesThread(int row, int col, Labyrinth l) {
+	public static boolean solve(int row, int col, Labyrinth l) {
 		visited[row][col] = true;
 
-//		if (isSafe(row, col, Labyrinth.UP, l)) {
-//			System.out.println("up");
-//			//directions.add(0);
-//			ariadnesThread(row, col, l);
-//		}
-		if (isSafe(row, col, Labyrinth.DOWN, l)) {
-			System.out.println("down");
-			//directions.add(1);
-			ariadnesThread(row, col, l);
-		}
-//		if (isSafe(row, col, Labyrinth.LEFT, l)) {
-//			System.out.println("left");
-//			//directions.add(2);
-//			ariadnesThread(row, col, l);
-//		}
-		if (isSafe(row, col, Labyrinth.RIGHT, l)) {
-			System.out.println("right");
-			//directions.add(3);
-			ariadnesThread(row, col, l);
-		}
-	}
-
-	public boolean isSafe(int row, int col, int[] x, Labyrinth l) {
-		int tempRow = row + x[0];
-		int tempCol = col + x[1];
-
-		if (l.isValid(tempRow, tempCol) && l.isStone(tempRow, tempCol)) {
-			System.out.println("true");
+		if (visited[totalRows-1][totalCols-1]) {
 			return true;
 		}
 		else {
-			System.out.println("false");
+			if (isSafe(row, col, Labyrinth.DOWN, l)) {
+				directions.add(1);
+				if (solve(row + 1, col, l)) {
+					return true;
+				}
+				directions.remove(directions.size()-1);
+				visited[row][col] = false;
+			}
+
+			if (isSafe(row, col, Labyrinth.RIGHT, l)) {
+				directions.add(3);
+				if (solve(row, col + 1, l)) {
+					return true;
+				}
+				directions.remove(directions.size()-1);
+				visited[row][col] = false;
+			}
+
+			if (isSafe(row, col, Labyrinth.UP, l)) {
+				directions.add(0);
+				if (solve(row - 1, col, l)) {
+					return true;
+				}
+				directions.remove(directions.size()-1);
+				visited[row][col] = false;
+			}
+
+			if (isSafe(row, col, Labyrinth.LEFT, l)) {
+				directions.add(2);
+				if (solve(row, col - 1, l)) {
+					return true;
+				}
+				directions.remove(directions.size()-1);
+				visited[row][col] = false;
+			}
+		}
+		return false;
+	}
+
+//	public static int[] toArray(ArrayList<Integer> x) {
+//		int[] moves = new int[x.size()];
+//
+//		for (int i = 0; i < x.size(); i++) {
+//			moves[i] = x.get(i);
+//		}
+//
+//		return moves;
+//	}
+
+	public static boolean isSafe(int row, int col, int[] x, Labyrinth l) {
+		int tempRow = row + x[0];
+		int tempCol = col + x[1];
+
+		if (l.isValid(tempRow, tempCol) && l.isStone(tempRow, tempCol) && !visited[tempRow][tempCol]) {
+			return true;
+		}
+		else {
 			return false;
 		}
 	}
 
 	public static void main(String[] args) {
-		Labyrinth crete = new Labyrinth(3,3);
-		Noah ripke = new Noah();
+		totalCols = (int)(Math.random()*15);
+		totalRows = (int)(Math.random()*15);
 
-		ripke.ariadnesThread(0,0, crete);
+		visited = new boolean[totalRows][totalCols];
+
+		Labyrinth crete = new Labyrinth(totalRows,totalCols);
 		crete.printGrid();
-		System.out.println(directions.get(0));
+
+		System.out.println("Solved: " + solve(0,0, crete));
 	}
 }
