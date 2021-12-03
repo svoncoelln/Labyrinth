@@ -5,9 +5,10 @@ public class Noah {
 	static int totalRows;
 	static boolean[][] visited;
 	static ArrayList<Integer> directions = new ArrayList<>();
-	static int[] moves;
+	static Integer[] moves;
+	static int[] solution;
 
-	public static boolean solve(int row, int col, Labyrinth l) {
+	public static boolean findSafeMove(int row, int col, Labyrinth l) {
 		visited[row][col] = true;
 
 		if (visited[totalRows-1][totalCols-1]) {
@@ -16,7 +17,7 @@ public class Noah {
 		else {
 			if (isSafe(row, col, Labyrinth.DOWN, l)) {
 				directions.add(1);
-				if (solve(row + 1, col, l)) {
+				if (findSafeMove(row + 1, col, l)) {
 					return true;
 				}
 				directions.remove(directions.size()-1);
@@ -25,7 +26,7 @@ public class Noah {
 
 			if (isSafe(row, col, Labyrinth.RIGHT, l)) {
 				directions.add(3);
-				if (solve(row, col + 1, l)) {
+				if (findSafeMove(row, col + 1, l)) {
 					return true;
 				}
 				directions.remove(directions.size()-1);
@@ -34,7 +35,7 @@ public class Noah {
 
 			if (isSafe(row, col, Labyrinth.UP, l)) {
 				directions.add(0);
-				if (solve(row - 1, col, l)) {
+				if (findSafeMove(row - 1, col, l)) {
 					return true;
 				}
 				directions.remove(directions.size()-1);
@@ -43,7 +44,7 @@ public class Noah {
 
 			if (isSafe(row, col, Labyrinth.LEFT, l)) {
 				directions.add(2);
-				if (solve(row, col - 1, l)) {
+				if (findSafeMove(row, col - 1, l)) {
 					return true;
 				}
 				directions.remove(directions.size()-1);
@@ -52,16 +53,18 @@ public class Noah {
 		}
 		return false;
 	}
-
-//	public static int[] toArray(ArrayList<Integer> x) {
-//		int[] moves = new int[x.size()];
-//
-//		for (int i = 0; i < x.size(); i++) {
-//			moves[i] = x.get(i);
-//		}
-//
-//		return moves;
-//	}
+	
+	public static int[] solve(Labyrinth l) {
+		findSafeMove(0, 0, l);
+		directions.toArray(moves);
+		
+		solution = new int[moves.length];
+		
+		for (int i = 0; i < moves.length; i++)
+			solution[i] = moves[i];
+		
+		return solution;
+	}
 
 	public static boolean isSafe(int row, int col, int[] x, Labyrinth l) {
 		int tempRow = row + x[0];
@@ -84,6 +87,10 @@ public class Noah {
 		Labyrinth crete = new Labyrinth(totalRows,totalCols);
 		crete.printGrid();
 
-		System.out.println("Solved: " + solve(0,0, crete));
+		solve(crete);
+
+		for (int i = 0; i < solution.length; i++) {
+			System.out.println(solution[i]);
+		}
 	}
 }
