@@ -1,13 +1,24 @@
 import java.util.ArrayList;
 
 public class Noah {
-	static int totalCols;
-	static int totalRows;
-	static boolean[][] visited;
-	static ArrayList<Integer> directions = new ArrayList<>();
-	static Integer[] moves;
-	static int[] solution;
 
+	static int totalCols; // number of rows in the maze, randomly generated between 5 and 15
+	static int totalRows; // number of columns in the maze, randomly generated between 5 and 15
+	static boolean[][] visited; // 2 dimensional array which tracks the squares the algorithm has already visited
+	static ArrayList<Integer> directions = new ArrayList<>(); // arraylist of moves the program makes represented by integers 0-3
+
+	/**
+    * Recursively solves the maze, with the exit case being that the final 
+	* square has been visited. Store the moves made to get there in an 
+	* arraylist.
+    *
+    * @param row the current "row" in the labyrinth, used as the first index in
+	* references to arrays representing the labyrinth. 
+	* @param col the current "column" in the labyrinth, used as the second index
+	* in references to arrays representing the labyrinth.
+	* @return a boolean representing whether the algorithm has been to the last
+	* square in the maze. 
+    */
 	public static boolean findSafeMove(int row, int col, Labyrinth l) {
 		visited[row][col] = true;
 
@@ -54,43 +65,72 @@ public class Noah {
 		return false;
 	}
 	
+	/**
+	* Call findSafeMove to solve the labyrinth. Convert the arraylist of moves
+	* made to an array of Integers and convert that array to an array of ints. 
+	*
+	* @param l the labyrinth to be solved.
+	* @return an int array containing the moves made to solve the maze. 
+	*/
 	public static int[] solve(Labyrinth l) {
 		findSafeMove(0, 0, l);
+		Integer[] moves = new Integer[directions.size()];
 		directions.toArray(moves);
 		
-		solution = new int[moves.length];
+		int[] solution = new int[moves.length];
 		
-		for (int i = 0; i < moves.length; i++)
+		for (int i = 0; i < moves.length; i++) {
 			solution[i] = moves[i];
+		}
 		
 		return solution;
 	}
 
+	/**
+	* Determine if a move is in the labyrinth, and if so, check if it is stone
+	* and if the algorithm has visited it previously. 
+	* 
+	* @param the current "row" in the labyrinth, used as the first index in
+	* references to arrays representing the labyrinth. 
+	* @param col the current "column" in the labyrinth, used as the second index
+	* in references to arrays representing the labyrinth.
+	* @param x an array of integers representing movement in the array.
+	* @param l the labyrinth in which the move is being made.
+	* @return a boolean representing whether or not the move is safe (stone 
+	* and within the grid). 
+	*/
 	public static boolean isSafe(int row, int col, int[] x, Labyrinth l) {
 		int tempRow = row + x[0];
 		int tempCol = col + x[1];
 
-		if (l.isValid(tempRow, tempCol) && l.isStone(tempRow, tempCol) && !visited[tempRow][tempCol]) {
+		if (!l.isValid(tempRow, tempCol)) {
+			return false; 
+		}
+		else if (l.isStone(tempRow, tempCol) && !visited[tempRow][tempCol]) {
 			return true;
 		}
 		else {
 			return false;
 		}
 	}
-
+	
+	/** 
+	* Initialize variables for the total rows and columns in the labyrinth 
+	* to randomly generated values as well as a 2 dimensional array to keep 
+	* track of which squares of the maze the algorithm has already visited. 
+	* Declare and initialize a Labyrinth of those dimensions. Print the 
+	* labyrinth as well as the result of a Labyrinth method testing whether
+	* the solution to the maze correctly solves it. 
+	*/
 	public static void main(String[] args) {
-		totalCols = (int)(Math.random()*15);
-		totalRows = (int)(Math.random()*15);
+		totalCols = (int)((Math.random()*20)+5);
+		totalRows = (int)((Math.random()*20)+5);
 
 		visited = new boolean[totalRows][totalCols];
 
 		Labyrinth crete = new Labyrinth(totalRows,totalCols);
 		crete.printGrid();
 
-		solve(crete);
-
-		for (int i = 0; i < solution.length; i++) {
-			System.out.println(solution[i]);
-		}
+		System.out.println(crete.solves(solve(crete)));
 	}
 }
