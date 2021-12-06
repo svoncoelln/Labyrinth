@@ -79,6 +79,9 @@ public class Noah {
 	* @return an int array containing the moves made to solve the maze. 
 	*/
 	public static int[] solve(Labyrinth l) {
+		
+		visited = new boolean[l.rows][l.cols];
+		
 		findSafeMove(0, 0, l);
 		Integer[] moves = new Integer[directions.size()];
 		directions.toArray(moves);
@@ -131,8 +134,6 @@ public class Noah {
 	public static void main(String[] args) {
 		totalCols = (int)((Math.random()*20)+5);
 		totalRows = (int)((Math.random()*20)+5);
-
-		visited = new boolean[totalRows][totalCols];
 
 		Labyrinth crete = new Labyrinth(totalRows,totalCols);
 		crete.printGrid();
